@@ -7,19 +7,23 @@ apt-get install git curl python-dev python-pip python-pil python-setuptools zlib
 apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 libc6-dev-i386 -y > /dev/null
 pip install --upgrade setuptools
 pip install ledgerblue
+pip install --upgrade pip
 
 echo "Setting up BOLOS environment"
 mkdir /opt/bolos
 cd /opt/bolos
 
 echo "Installing custom compilers, can take a few minutes..."
-wget -q https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q1-update/+download/gcc-arm-none-eabi-5_3-2016q1-20160330-linux.tar.bz2
-tar xjf gcc-arm-none-eabi-5_3-2016q1-20160330-linux.tar.bz2
+wget -q https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q3-update/+download/gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2
+tar xjf gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2
+mv /opt/bolos/gcc-arm-none-eabi-5_4-2016q3 /opt/bolos/gcc-arm-none-eabi-5_3-2016q1
 ln -s /opt/bolos/gcc-arm-none-eabi-5_3-2016q1/bin/arm-none-eabi-gcc /usr/bin/arm-none-eabi-gcc
+rm gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2
 
-wget -q http://releases.llvm.org/4.0.0/clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-tar xvf clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-mv clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-14.04 clang-arm-fropi
+wget -q http://releases.llvm.org/4.0.0/clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+tar xvf clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+mv clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04 clang-arm-fropi
+rm clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
 chmod 757 -R clang-arm-fropi/
 chmod +x clang-arm-fropi/bin/clang
 ln -s /opt/bolos/clang-arm-fropi/bin/clang /usr/bin/clang
@@ -30,6 +34,10 @@ git clone https://github.com/LedgerHQ/nanos-secure-sdk.git
 cd nanos-secure-sdk/
 git checkout tags/nanos-1421
 cd /opt/bolos/
+echo "cloning sdk for blue"
+git clone https://github.com/LedgerHQ/blue-secure-sdk.git
+cd blue-secure-sdk/
+git checkout tags/blue-r21.1
 
 echo "finetuning rights for usb access"
 wget -q -O - https://raw.githubusercontent.com/LedgerHQ/udev-rules/master/add_udev_rules.sh | bash
